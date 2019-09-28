@@ -77,25 +77,39 @@ app.post('/links',
 /************************************************************/
 // Write your authentication routes here
 /************************************************************/
-// app.get('/', function(req, res) {
-// res.sendfile('signup.ejs');
+
 app.post('/signup', (req, res, next) => {
-  var username = req.body.username; // sets username and password from client inputs
+  var username = req.body.username;
   var password = req.body.password;
-  // console.log('this is our' + username);
-  models.Users.get({username})      // models comes from line 7 and Users is a class that extends from Model, passing down it's parent methods. Use the .get method on our username. get takes in options, which is supposed to be an object, so we make our username an object and pass it through
-    .then(user => {                 // create a promise, then create a parameter user
-      if (user) {                   // if the user exists
-        throw user;                 // throw the user to our .catch below
+
+  models.Users.get({username})
+    .then(user => {
+      if (user) {
+        throw user;
       }
-      models.Users.create({username, password}); // else create the username and password and return the values
+      models.Users.create({username, password});
+    })
+    .then(() => {
+      res.redirect('/');
+    })
+    // .then(password => {
+    //   res.redirect('/login');
+    //   if (password) {
+    //     models.Users.compare({attempted, password, salt})
+    //   } else {
+    //     res.redirect('/login')
+    //   }
+    // })
+    .then(() => {
+      res.send();
     })
     .catch(user => {
-      res.status(200).send(user);   // send status that it was succesful in checking for a user. not a 404 even though it's not found, we want the client to see that something went through
+      res.status(200).redirect('/signup');
     });
-
-  res.send();
 });
+
+
+
 
 //exports.compareHash function(attempted, stored, salt) {//   return stored === this.createHash(attempted, salt);
 //
